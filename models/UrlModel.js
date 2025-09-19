@@ -4,13 +4,12 @@ const moment = require('moment');
 
 class UrlModel {
   constructor() {
-    // In-memory storage for this implementation
-    // In production, this would be a database
+   
     this.urls = new Map();
     this.shortcodes = new Set();
   }
 
-  // Generate a unique shortcode
+
   generateShortcode(length = 6) {
     const chars = 'ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789';
     let shortcode;
@@ -25,7 +24,7 @@ class UrlModel {
     return shortcode;
   }
 
-  // Validate URL format
+
   validateUrl(url) {
     if (!url || typeof url !== 'string') {
       throw new Error('URL is required and must be a string');
@@ -41,7 +40,6 @@ class UrlModel {
     return true;
   }
 
-  // Validate shortcode format
   validateShortcode(shortcode) {
     if (!shortcode || typeof shortcode !== 'string') {
       throw new Error('Shortcode must be a non-empty string');
@@ -58,9 +56,8 @@ class UrlModel {
     return true;
   }
 
-  // Create a new short URL
   createShortUrl(originalUrl, validityMinutes = 30, customShortcode = null) {
-    // Validate inputs
+
     this.validateUrl(originalUrl);
     
     if (validityMinutes < 1 || validityMinutes > 10080) { // Max 7 days
@@ -95,9 +92,9 @@ class UrlModel {
       clicks: []
     };
 
-    // Store the URL data
+  
     this.urls.set(id, urlData);
-    this.urls.set(shortcode, urlData); // Also index by shortcode for quick lookup
+    this.urls.set(shortcode, urlData); 
     this.shortcodes.add(shortcode);
 
     return {
@@ -111,7 +108,7 @@ class UrlModel {
     };
   }
 
-  // Get URL by shortcode
+
   getUrlByShortcode(shortcode) {
     const urlData = this.urls.get(shortcode);
     
@@ -119,7 +116,7 @@ class UrlModel {
       throw new Error('Short URL not found');
     }
 
-    // Check if URL has expired
+
     if (new Date() > urlData.expiresAt) {
       throw new Error('Short URL has expired');
     }
@@ -127,7 +124,7 @@ class UrlModel {
     return urlData;
   }
 
-  // Record a click
+  
   recordClick(shortcode, clickData) {
     const urlData = this.urls.get(shortcode);
     
@@ -151,7 +148,7 @@ class UrlModel {
     return click;
   }
 
-  // Get URL statistics
+
   getUrlStats(shortcode) {
     const urlData = this.getUrlByShortcode(shortcode);
     
@@ -171,7 +168,7 @@ class UrlModel {
     };
   }
 
-  // Clean up expired URLs (utility method)
+
   cleanupExpiredUrls() {
     const now = new Date();
     const expiredIds = [];
