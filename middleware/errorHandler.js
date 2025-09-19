@@ -3,7 +3,7 @@ const { createLogger } = require('./logger');
 const logger = createLogger();
 
 const errorHandler = (err, req, res, next) => {
-  // Log the error
+
   logger.error('Error occurred', {
     error: err.message,
     stack: err.stack,
@@ -14,13 +14,13 @@ const errorHandler = (err, req, res, next) => {
     timestamp: new Date().toISOString()
   });
 
-  // Default error
+
   let error = {
     message: 'Internal Server Error',
     status: 500
   };
 
-  // Handle specific error types
+ 
   if (err.name === 'ValidationError') {
     error.message = 'Validation Error';
     error.status = 400;
@@ -36,7 +36,7 @@ const errorHandler = (err, req, res, next) => {
     error.message = err.message;
   }
 
-  // Send error response
+
   res.status(error.status).json({
     error: error.message,
     status: error.status,
