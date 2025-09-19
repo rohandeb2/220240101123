@@ -2,17 +2,20 @@
 
 A robust HTTP URL Shortener Microservice built for Affordmed's campus hiring evaluation. This service provides URL shortening functionality with comprehensive analytics and robust error handling.
 
-## Features
+## Architecture
 
-- ✅ **URL Shortening**: Convert long URLs into short, manageable links
-- ✅ **Custom Shortcodes**: Support for user-defined shortcodes
-- ✅ **Automatic Generation**: Auto-generate unique shortcodes when not provided
-- ✅ **Expiration Control**: Configurable validity period (default: 30 minutes)
-- ✅ **Click Analytics**: Track clicks with timestamps, referrers, and location data
-- ✅ **Comprehensive Logging**: Extensive logging using Winston middleware
-- ✅ **Error Handling**: Robust error handling with appropriate HTTP status codes
-- ✅ **Rate Limiting**: Built-in rate limiting for API protection
-- ✅ **Security**: Helmet.js security headers and input validation
+The service follows a layered architecture:
+
+```
+
+│   Client        │    │   Express.js    │    │   Data Layer    │
+│   (Browser/API) │<---->│   Application   │<--->│   (In-Memory)   │
+
+                              │
+                              ▼
+                       
+                       │  Logging Layer  │
+                       │   (Winston)     │
 
 ## API Endpoints
 
@@ -171,21 +174,7 @@ The service uses Winston for comprehensive logging:
 - **CORS**: Configurable cross-origin resource sharing
 - **Request Size Limiting**: 10MB limit on request body
 
-## Architecture
 
-The service follows a layered architecture:
-
-```
-┌─────────────────┐    ┌─────────────────┐    ┌─────────────────┐
-│   Client        │    │   Express.js    │    │   Data Layer    │
-│   (Browser/API) │◄──►│   Application   │◄──►│   (In-Memory)   │
-└─────────────────┘    └─────────────────┘    └─────────────────┘
-                              │
-                              ▼
-                       ┌─────────────────┐
-                       │  Logging Layer  │
-                       │   (Winston)     │
-                       └─────────────────┘
 ```
 
 ## Data Model
