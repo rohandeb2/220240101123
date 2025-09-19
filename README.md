@@ -8,12 +8,8 @@ This document outlines the url shortener microservice showing how the url shorte
 
 
 | Client |    <-----> | Express.js |           <-----> | Data Layer |
-| (API) |              | Application |                 | (In-Memory/DB) |
-                          |
-                          |
-                          |
-                    | Logging Layer |
-                    | (Winston/Custom) 
+| (API) |              | Application |                 
+                        
 
                     
 ### Technology Stack
