@@ -18,7 +18,7 @@ describe('URL Shortener Microservice', () => {
       expect(response.body.shortLink).toMatch(/^https?:\/\/.+\/[a-zA-Z0-9]+$/);
       expect(new Date(response.body.expiry)).toBeInstanceOf(Date);
       
-      // Extract shortcode for later tests
+      
       testShortcode = response.body.shortLink.split('/').pop();
     });
 
@@ -74,7 +74,7 @@ describe('URL Shortener Microservice', () => {
         .post('/shorturls')
         .send({
           url: 'https://www.example.com',
-          shortcode: 'ab' // Too short
+          shortcode: 'ab' 
         })
         .expect(400);
 
@@ -82,7 +82,7 @@ describe('URL Shortener Microservice', () => {
     });
 
     it('should reject duplicate shortcode', async () => {
-      // First create a URL with custom shortcode
+      
       await request(app)
         .post('/shorturls')
         .send({
@@ -91,7 +91,7 @@ describe('URL Shortener Microservice', () => {
         })
         .expect(201);
 
-      // Try to create another with same shortcode
+      
       const response = await request(app)
         .post('/shorturls')
         .send({
