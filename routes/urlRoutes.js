@@ -5,7 +5,7 @@ const { createLogger } = require('../middleware/logger');
 const router = express.Router();
 const logger = createLogger();
 
-// GET /shorturls - Informational/guard route to prevent fall-through to redirect
+
 router.get('/', (req, res) => {
   return res.status(405).json({
     error: 'Method Not Allowed',
@@ -15,12 +15,12 @@ router.get('/', (req, res) => {
   });
 });
 
-// POST /shorturls - Create a new short URL
+
 router.post('/', async (req, res, next) => {
   try {
     const { url, validity, shortcode } = req.body;
 
-    // Validate required fields
+
     if (!url) {
       return res.status(400).json({
         error: 'Bad Request',
@@ -41,10 +41,10 @@ router.post('/', async (req, res, next) => {
       userAgent: req.get('User-Agent')
     });
 
-    // Create the short URL
+    
     const urlData = urlModel.createShortUrl(url, validityMinutes, shortcode);
 
-    // Generate the short link
+    
     const shortLink = `${req.protocol}://${req.get('host')}/${urlData.shortcode}`;
 
     logger.info('Short URL created successfully', {
@@ -54,7 +54,7 @@ router.post('/', async (req, res, next) => {
       expiresAt: urlData.expiresAt
     });
 
-    // Return the response as per API specification
+    
     res.status(201).json({
       shortLink,
       expiry: urlData.expiresAt.toISOString()
@@ -67,7 +67,7 @@ router.post('/', async (req, res, next) => {
       ip: req.ip
     });
 
-    // Handle specific error cases
+    
     if (error.message.includes('already exists')) {
       return res.status(409).json({
         error: 'Conflict',
@@ -104,12 +104,12 @@ router.post('/', async (req, res, next) => {
       });
     }
 
-    // Generic error response
+    
     next(error);
   }
 });
 
-// GET /shorturls/:shortcode - Get URL statistics
+
 router.get('/:shortcode', async (req, res, next) => {
   try {
     const { shortcode } = req.params;
@@ -120,7 +120,7 @@ router.get('/:shortcode', async (req, res, next) => {
       userAgent: req.get('User-Agent')
     });
 
-    // Get URL statistics
+    
     const stats = urlModel.getUrlStats(shortcode);
 
     logger.info('URL statistics retrieved successfully', {
@@ -129,7 +129,7 @@ router.get('/:shortcode', async (req, res, next) => {
       originalUrl: stats.originalUrl
     });
 
-    // Return the statistics as per API specification
+    
     res.status(200).json({
       shortcode: stats.shortcode,
       originalUrl: stats.originalUrl,
