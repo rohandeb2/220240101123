@@ -1,14 +1,14 @@
 const winston = require('winston');
 const path = require('path');
 
-// Create logs directory if it doesn't exist
+
 const fs = require('fs');
 const logDir = 'logs';
 if (!fs.existsSync(logDir)) {
   fs.mkdirSync(logDir);
 }
 
-// Define log format
+
 const logFormat = winston.format.combine(
   winston.format.timestamp({
     format: 'YYYY-MM-DD HH:mm:ss.SSS'
@@ -25,14 +25,14 @@ const logFormat = winston.format.combine(
   })
 );
 
-// Create logger instance
+
 const createLogger = () => {
   return winston.createLogger({
     level: process.env.LOG_LEVEL || 'info',
     format: logFormat,
     defaultMeta: { service: 'url-shortener' },
     transports: [
-      // Console transport
+     
       new winston.transports.Console({
         format: winston.format.combine(
           winston.format.colorize(),
@@ -40,41 +40,39 @@ const createLogger = () => {
         )
       }),
       
-      // File transport for all logs
+
       new winston.transports.File({
         filename: path.join(logDir, 'combined.log'),
-        maxsize: 5242880, // 5MB
+        maxsize: 5242880, 
         maxFiles: 5,
         tailable: true
       }),
-      
-      // File transport for errors only
+
       new winston.transports.File({
         filename: path.join(logDir, 'error.log'),
         level: 'error',
-        maxsize: 5242880, // 5MB
+        maxsize: 5242880, 
         maxFiles: 5,
         tailable: true
       }),
-      
-      // File transport for info logs
+
       new winston.transports.File({
         filename: path.join(logDir, 'info.log'),
         level: 'info',
-        maxsize: 5242880, // 5MB
+        maxsize: 5242880, 
         maxFiles: 5,
         tailable: true
       })
     ],
     
-    // Handle uncaught exceptions
+    
     exceptionHandlers: [
       new winston.transports.File({
         filename: path.join(logDir, 'exceptions.log')
       })
     ],
     
-    // Handle unhandled promise rejections
+    
     rejectionHandlers: [
       new winston.transports.File({
         filename: path.join(logDir, 'rejections.log')
