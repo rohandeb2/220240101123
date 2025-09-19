@@ -1,184 +1,29 @@
-# URL Shortener Microservice
+# URL Shortener Microservice - Design Document
 
-A robust HTTP URL Shortener Microservice built for Affordmed's campus hiring evaluation. This service provides URL shortening functionality with comprehensive analytics and robust error handling.
-
-## Architecture
-
-The service follows a layered architecture:
-
-```
-
-│   Client        │    │   Express.js    │    │   Data Layer    │
-│   (Browser/API) │<---->│   Application   │<--->│   (In-Memory)   │
-
-                              │
-                              ▼
-                       
-                       │  Logging Layer  │
-                       │   (Winston)     │
-
-## API Endpoints
-
-### 1. Create Short URL
-```http
-POST /shorturls
-Content-Type: application/json
-
-{
-  "url": "https://very-very-very-long-and-descriptive-subdomain-that-goes-on-and-on.somedomain.com/additional/directory/levels/for/more/length/really-log-sub-domain/a-really-log-page",
-  "validity": 30,
-  "shortcode": "abcd1"
-}
-```
-
-**Response:**
-```json
-{
-  "shortLink": "https://hostname:port/abcd1",
-  "expiry": "2025-01-01T00:30:00Z"
-}
-```
-
-### 2. Get URL Statistics
-```http
-GET /shorturls/:shortcode
-```
-
-**Response:**
-```json
-{
-  "shortcode": "abcd1",
-  "originalUrl": "https://example.com/very-long-url",
-  "createdAt": "2025-01-01T00:00:00Z",
-  "expiresAt": "2025-01-01T00:30:00Z",
-  "clickCount": 5,
-  "clicks": [
-    {
-      "id": "uuid",
-      "timestamp": "2025-01-01T00:15:00Z",
-      "referrer": "https://google.com",
-      "location": "Unknown",
-      "userAgent": "Mozilla/5.0..."
-    }
-  ]
-}
-```
-
-### 3. Redirect to Original URL
-```http
-GET /:shortcode
-```
-
-**Response:** 302 Redirect to original URL
-
-### 4. Health Check
-```http
-GET /health
-```
-
-**Response:**
-```json
-{
-  "status": "OK",
-  "timestamp": "2025-01-01T00:00:00Z",
-  "service": "URL Shortener Microservice"
-}
-```
-
-## Installation
-
-1. **Clone the repository:**
-   ```bash
-   git clone <repository-url>
-   cd url-shortener-microservice
-   ```
-
-2. **Install dependencies:**
-   ```bash
-   npm install
-   ```
-
-3. **Start the server:**
-   ```bash
-   # Development mode
-   npm run dev
-   
-   # Production mode
-   npm start
-   ```
-
-4. **Run tests:**
-   ```bash
-   npm test
-   ```
-
-## Configuration
-
-The service can be configured using environment variables:
-
-- `PORT`: Server port (default: 3000)
-- `LOG_LEVEL`: Logging level (default: 'info')
-
-## Usage Examples
-
-### Creating a Short URL
-
-```bash
-curl -X POST http://localhost:3000/shorturls \
-  -H "Content-Type: application/json" \
-  -d '{
-    "url": "https://www.example.com/very-long-url",
-    "validity": 60,
-    "shortcode": "mycode123"
-  }'
-```
-
-### Getting Statistics
-
-```bash
-curl http://localhost:3000/shorturls/mycode123
-```
-
-### Accessing Short URL
-
-```bash
-curl -L http://localhost:3000/mycode123
-```
-
-## Error Handling
-
-The service returns appropriate HTTP status codes and descriptive error messages:
-
-- **400 Bad Request**: Invalid input data
-- **404 Not Found**: Shortcode doesn't exist
-- **409 Conflict**: Shortcode already exists
-- **410 Gone**: URL has expired
-- **429 Too Many Requests**: Rate limit exceeded
-- **500 Internal Server Error**: Server error
-
-## Logging
-
-The service uses Winston for comprehensive logging:
-
-- **Console**: Development and debugging
-- **Files**: Persistent storage with rotation
-  - `logs/combined.log`: All logs
-  - `logs/error.log`: Error logs only
-  - `logs/info.log`: Info logs only
-
-## Security Features
-
-- **Helmet.js**: Security headers
-- **Rate Limiting**: 100 requests per 15 minutes per IP
-- **Input Validation**: Comprehensive validation for all inputs
-- **CORS**: Configurable cross-origin resource sharing
-- **Request Size Limiting**: 10MB limit on request body
+## Overview
+This document outlines the url shortener microservice showing how the url shortening works that are build using express.js
 
 
-```
+##Architecture
 
-## Data Model
 
+| Client |    <-----> | Express.js |           <-----> | Data Layer |
+| (API) |              | Application |                 | (In-Memory/DB) |
+                          |
+                          |
+                          |
+                    | Logging Layer |
+                    | (Winston/Custom) 
+
+                    
+### Technology Stack
+
+#### Core Technologies
+- **Node.js**: Runtime environment for JavaScript execution
+- **Express.js**: Web application framework for handling HTTP requests
+
+
+### URL Entity Structure
 ```javascript
 {
   id: "uuid",                    // Unique identifier
@@ -199,45 +44,57 @@ The service uses Winston for comprehensive logging:
 }
 ```
 
-## Testing
+## API Design
 
-The service includes comprehensive tests:
 
-```bash
-# Run all tests
-npm test
+#### 1. Create Short URL
+- **Method**: POST
+- **Path**: `/shorturls`
+- **Request Body**:
+  ```json
+  {
+    "url": "https://google.com/",
+    "validity": 30,
+    "shortcode": "custom123"
+  }
+  ```
+- **Response**: 201 Created
+  ```json
+  {
+    "shortLink": "https://localhost:3000/abkda",
+    "expiry": "2025-01-01T00:30:00Z"
+  }
+  ```
 
-# Run tests in watch mode
-npm run test:watch
+#### 2. Get URL Statistics
+- **Method**: GET
+- **Path**: `/shorturls/:shortcode`
+- **Response**: 200 OK
+  ```json
+  {
+    "shortcode": "custom123",
+    "originalUrl": "https://bing.com/koiuydtuyoiygfxghjlg",
+    "createdAt": "2025-09-19T07:09:55.206Z",
+    "expiresAt": "2025-09-19T07:09:56.206Z",
+    "clickCount": 5,
+    "clicks": [...]
+  }
+  ```
 
-# Run tests with coverage
-npm run test:coverage
+#### 3. Redirect to Original URL
+- **Method**: GET
+- **Path**: `/:shortcode`
+- **Response**: 302 Redirect to original URL
+
+
+
+#### Error Response Format
+```json
+{
+  "error": "Error Type",
+  "message": "Human-readable error message",
+  "status": 400,
+  "timestamp": "2025-01-01T00:00:00Z",
+  "path": "/shorturls"
+}
 ```
-
-## Performance Considerations
-
-- **In-Memory Storage**: Fast read/write operations
-- **Dual Indexing**: O(1) lookup by ID or shortcode
-- **Rate Limiting**: Protection against abuse
-- **Request Size Limiting**: Memory protection
-
-## Future Enhancements
-
-- Database integration (PostgreSQL/MongoDB)
-- Authentication and authorization
-- Bulk URL operations
-- Custom domain support
-- QR code generation
-- Advanced analytics and reporting
-
-## License
-
-MIT License - See LICENSE file for details
-
-## Contact
-
-For questions or support, please contact the development team.
-
----
-
-**Note**: This service was developed as part of Affordmed's campus hiring evaluation. It demonstrates production-ready patterns and practices while meeting all specified requirements.
