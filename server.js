@@ -9,26 +9,26 @@ const { errorHandler } = require('./middleware/errorHandler');
 const app = express();
 const PORT = process.env.PORT || 3000;
 
-// Initialize logger
+
 const logger = createLogger();
 
-// Security middleware
+
 app.use(helmet());
 app.use(cors());
 
-// Rate limiting
+
 const limiter = rateLimit({
-  windowMs: 15 * 60 * 1000, // 15 minutes
-  max: 100, // limit each IP to 100 requests per windowMs
+  windowMs: 15 * 60 * 1000, // 
+  max: 100, 
   message: 'Too many requests from this IP, please try again later.'
 });
 app.use(limiter);
 
-// Body parsing middleware
+
 app.use(express.json({ limit: '10mb' }));
 app.use(express.urlencoded({ extended: true }));
 
-// Logging middleware
+
 app.use((req, res, next) => {
   logger.info(`${req.method} ${req.path}`, {
     ip: req.ip,
@@ -38,10 +38,10 @@ app.use((req, res, next) => {
   next();
 });
 
-// Routes
+
 app.use('/shorturls', urlRoutes);
 
-// Health check endpoint
+
 app.get('/health', (req, res) => {
   res.status(200).json({ 
     status: 'OK', 
@@ -50,7 +50,7 @@ app.get('/health', (req, res) => {
   });
 });
 
-// Root endpoint
+
 app.get('/', (req, res) => {
   res.json({
     message: 'URL Shortener Microservice',
@@ -64,13 +64,13 @@ app.get('/', (req, res) => {
   });
 });
 
-// Catch-all for short URL redirection (must be before 404 handler)
+
 app.get('/:shortcode', require('./routes/redirect'));
 
-// Error handling middleware
+
 app.use(errorHandler);
 
-// 404 handler
+
 app.use('*', (req, res) => {
   res.status(404).json({
     error: 'Not Found',
@@ -79,7 +79,7 @@ app.use('*', (req, res) => {
   });
 });
 
-// Start server
+
 app.listen(PORT, () => {
   logger.info(`URL Shortener Microservice running on port ${PORT}`);
   console.log(`Server running on http://localhost:${PORT}`);
