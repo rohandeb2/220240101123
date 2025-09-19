@@ -3,7 +3,7 @@ const { createLogger } = require('../middleware/logger');
 
 const logger = createLogger();
 
-// GET /:shortcode - Redirect to original URL
+
 const handleRedirect = async (req, res, next) => {
   try {
     const { shortcode } = req.params;
@@ -15,14 +15,14 @@ const handleRedirect = async (req, res, next) => {
       referrer: req.get('Referer') || 'Direct'
     });
 
-    // Get URL data
+    
     const urlData = urlModel.getUrlByShortcode(shortcode);
 
-    // Record the click
+    
     const clickData = {
       referrer: req.get('Referer') || 'Direct',
-      userAgent: req.get('User-Agent') || 'Unknown',
-      location: getLocationFromIP(req.ip) // Simple location detection
+        userAgent: req.get('User-Agent') || 'Unknown',
+      location: getLocationFromIP(req.ip) 
     };
 
     urlModel.recordClick(shortcode, clickData);
@@ -34,7 +34,7 @@ const handleRedirect = async (req, res, next) => {
       ip: req.ip
     });
 
-    // Redirect to the original URL
+
     res.redirect(302, urlData.originalUrl);
 
   } catch (error) {
@@ -66,16 +66,14 @@ const handleRedirect = async (req, res, next) => {
   }
 };
 
-// Simple location detection based on IP (for demo purposes)
-// In production, you would use a proper geolocation service
+
 const getLocationFromIP = (ip) => {
-  // This is a simplified implementation
-  // In production, use a service like MaxMind GeoIP2 or similar
+  
   if (ip === '127.0.0.1' || ip === '::1' || ip === '::ffff:127.0.0.1') {
     return 'Local';
   }
   
-  // For demo purposes, return a generic location
+  
   return 'Unknown';
 };
 
