@@ -4,7 +4,7 @@
 This document outlines the url shortener microservice showing how the url shortening works that are build using express.js
 
 
-##Architecture
+## Architecture
 
 
 | Client |    <-----> | Express.js |           <-----> | Data Layer |
